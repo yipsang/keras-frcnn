@@ -164,17 +164,16 @@ def classifier(base_layers, input_rois, num_rois, nb_classes = 21, trainable=Fal
     # compile times on theano tend to be very high, so we use smaller ROI pooling regions to workaround
 
     if K.backend() == 'tensorflow':
-        pooling_regions = 7
-        input_shape = (num_rois,7,7,512)
+        pooling_regions = 3
+        input_shape = (num_rois,3,3,160)
     elif K.backend() == 'theano':
-        pooling_regions = 7
-        input_shape = (num_rois,512,7,7)
+        pooling_regions = 3
+        input_shape = (num_rois,160,3,3)
 
     out_roi_pool = RoiPoolingConv(pooling_regions, num_rois)([base_layers, input_rois])
 
     out = TimeDistributed(Flatten(name='flatten'))(out_roi_pool)
-    out = TimeDistributed(Dense(4096, activation='relu', name='fc1'))(out)
-    out = TimeDistributed(Dense(4096, activation='relu', name='fc2'))(out)
+    out = TimeDistributed(Dense(2000, activation='relu', name='fc1'))(out)
 
     out_class = TimeDistributed(Dense(nb_classes, activation='softmax', kernel_initializer='zero'), name='dense_class_{}'.format(nb_classes))(out)
     # note: no regression target for bg class
