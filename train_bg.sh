@@ -1,0 +1,1 @@
+nohup python -u train_frcnn.py -o simple -p input_data.txt $1 > train.log 2>&1&
